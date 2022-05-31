@@ -10,10 +10,9 @@ public class Inventory {
     }
 
     //Add a guitar into the Guitar list
-    public void addGuitar(String serialNumber, double price, String builder,
-                          String model, String type, String backWood, String topWood) {
+    public void addGuitar(String serialNumber, double price, GuitarSpec spec) {
 
-        Guitar guitar = new Guitar(serialNumber, price, builder, model, type, backWood, topWood);
+        Guitar guitar = new Guitar(serialNumber, price, spec);
         guitars.add(guitar);
     }
 
@@ -30,44 +29,28 @@ public class Inventory {
 
     //it is getting the Guitar from parameter
     //return the guitar if there was a guitar with that criteria
-    public Guitar search(Guitar searchGuitar) {
+    public List search(GuitarSpec searchSpec) {
+        List matchingGuitars = new LinkedList();
         for (Iterator i = guitars.iterator(); i.hasNext(); ) {
             Guitar guitar = (Guitar)i.next();
-            // Ignore serial number since that’s unique
-            // Ignore price since that’s unique
-            String builder = searchGuitar.getBuilder();
-            if ((builder != null) && (!builder.equals("")) &&
-                    (!builder.equals(guitar.getBuilder())))
+            GuitarSpec guitarSpec = guitar.getSpec();
+            if (searchSpec.getBuilder() != guitarSpec.getBuilder())
                 continue;
-            String model = searchGuitar.getModel();
+            String model = searchSpec.getModel();
             if ((model != null) && (!model.equals("")) &&
-                    (!model.equals(guitar.getModel())))
+                    (!model.equals(guitarSpec.getModel().toLowerCase())))
                 continue;
-            String type = searchGuitar.getType();
-            if ((type != null) && (!searchGuitar.equals("")) &&
-                    (!type.equals(guitar.getType())))
+            if (searchSpec.getType() != guitarSpec.getType())
                 continue;
-            String backWood = searchGuitar.getBackWood();
-            if ((backWood != null) && (!backWood.equals("")) &&
-                    (!backWood.equals(guitar.getBackWood())))
+            if (searchSpec.getBackWood() != guitarSpec.getBackWood())
                 continue;
-            String topWood = searchGuitar.getTopWood();
-            if ((topWood != null) && (!topWood.equals("")) &&
-                    (!topWood.equals(guitar.getTopWood())))
+            if (searchSpec.getTopWood() != guitarSpec.getTopWood())
                 continue;
+            matchingGuitars.add(guitar);
         }
-        return null;
+        return matchingGuitars;
     }
 
 }
 
-public enum Type {
-    ACOUSTIC, ELECTRIC;
-    public String toString() {
-        switch(this) {
-            case ACOUSTIC: return "acoustic";
-            case ELECTRIC: return "electric";
-            default: return "unspecified";
-        }
-    }
-}
+
